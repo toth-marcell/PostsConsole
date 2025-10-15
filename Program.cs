@@ -4,7 +4,7 @@ using PostsConsole;
 ServerConnection server = new("http://localhost:3000/api/");
 
 MenuOption[] menuOptions = [
-    new MenuOption("Get all posts", async () => { Console.WriteLine(string.Join(", ", await server.GetPosts())); })
+    new MenuOption("Get all posts", async () => { Console.WriteLine(string.Join("\n", (await server.GetPosts()).Select(x=>JsonSerializer.Serialize(x)))); })
 ];
 MenuOption[] loggedInOptions = [
     new MenuOption("Log out", () => { server.Logout(); return Task.CompletedTask; }),
