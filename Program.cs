@@ -6,10 +6,13 @@ ServerConnection server = new("http://localhost:3000/api/");
 MenuOption[] menuOptions = [
     new MenuOption("Get all posts", async () => { Console.WriteLine(string.Join(", ", await server.GetPosts())); })
 ];
-MenuOption[] loggedInOptions = [];
+MenuOption[] loggedInOptions = [
+    new MenuOption("Log out", () => { server.Logout(); return Task.CompletedTask; }),
+    new MenuOption("Create new post", async () => { Console.WriteLine(await server.CreatePost(new Post(RequestString("Title"), RequestOptionalString("Link"), RequestOptionalString("Link type"), RequestOptionalString("Post text"), RequestString("Category"))));  })
+];
 MenuOption[] loggedOutOptions = [
-    new MenuOption("Register", async () => {Console.WriteLine(await server.Register(RequestString("Name"), RequestString("Password"), RequestOptionalString("About text"))); }),
-    new MenuOption("Log in", async () => {Console.WriteLine(await server.Login(RequestString("Name"), RequestString("Password"))); })
+    new MenuOption("Register", async () => { Console.WriteLine(await server.Register(RequestString("Name"), RequestString("Password"), RequestOptionalString("About text"))); }),
+    new MenuOption("Log in", async () => { Console.WriteLine(await server.Login(RequestString("Name"), RequestString("Password"))); })
 ];
 
 while (true) await ShowMenu();

@@ -24,9 +24,9 @@ namespace PostsConsole
         [JsonPropertyName("category")]
         public string Category { get; set; }
 
-        public int UserId { get; set; }
+        public int? UserId { get; set; }
 
-        public Post(string title, string? link, string? linkType, string? text, string category, int userId)
+        public Post(string title, string? link, string? linkType, string? text, string category, int? userId = null)
         {
             Title = title;
             Link = link;

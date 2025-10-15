@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Net;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -9,6 +10,7 @@ namespace PostsConsole
         private readonly HttpClient HTTP = new() { BaseAddress = new Uri(url) };
         private string? Token;
         public bool IsLoggedIn => Token != null;
+        public void Logout() => Token = null;
         public async Task<string> Register(string name, string password, string about)
         {
             try
@@ -38,7 +40,22 @@ namespace PostsConsole
         {
             HttpResponseMessage result = await HTTP.GetAsync("post");
             string body = await result.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<List<Post>>(body);
+            return JsonSerializer.Deserialize<List<Post>>(body) ?? throw new NullReferenceException();
+        }
+        public async Task<string> CreatePost(Post post)
+        {
+            try
+            {
+                HttpContent content = new StringContent(JsonSerializer.Serialize(post), Encoding.UTF8, "application/json");
+                using HttpRequestMessage request = new(HttpMethod.Post, "post");
+                request.Content = content;
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(Token!);
+                HttpResponseMessage result = await HTTP.SendAsync(request);
+                string body = await result.Content.ReadAsStringAsync();
+                Message response = JsonSerializer.Deserialize<Message>(body);
+                return response.Content;
+            }
+            catch (Exception e) { return e.Message; }
         }
     }
 }
